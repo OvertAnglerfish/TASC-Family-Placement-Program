@@ -1,31 +1,6 @@
 import java.io.*;
 import java.util.*;
-
-
- /*
-  * BufferedReader in = new BufferedReader(new FileReader("input.txt"));
-		while(in.ready())
-		{
-			System.out.println(in.readLine());
-		}
-
-		File file = new File("output.txt");
-
-		FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-
-		BufferedReader members = new BufferedReader(new FileReader("generalMembers.txt"));
-		String input = members.readLine();
-		String[] things = input.split("\t");
-		for(int i=0; i< things.length; i++)
-		{
-			System.out.println(things[i]);
-		}
-
-		String[] responses1 = {};
-		bw.close();
- */
-
+ 
 public class tfpp
 {
 	public static void main(String[] args) throws Exception
@@ -51,6 +26,14 @@ public class tfpp
 				familyScores[i/2][j-2] += Integer.parseInt(rawData[i][j]);
 			}
 		}
+        double[] familyTotals = new double[8];
+        for(int i=0;i< 8; i++)
+        {
+            for(int j=0; j < familyScores[0].length; j++)
+            {
+                familyTotals[i] += familyScores[i][j];
+            }
+        }
 		
 		ArrayList<ArrayList<String>> familyMembers= new ArrayList<ArrayList<String>>();
 		for(int i=0; i< 8; i++)
@@ -82,19 +65,23 @@ public class tfpp
 					scores[j] += Integer.parseInt(info[i]) * familyScores[j][i];
 				}
 			}
-			int max = 0;
-			scorebw.write(info[0] + "\t\t");
+			double max = 0;
+			int maxIndex = 0;
+            scorebw.write(info[0] + "\t\t");
 			//System.out.println(info[0]);
 			for(int i=0; i<8; i++)
 			{
-				scorebw.write(" " + scores[i]);
-				if(scores[i] > scores[max])
+                double tmp = scores[i]/familyTotals[i];
+                double display = Math.floor(tmp * 1000)/1000;
+				scorebw.write(" " + display);
+				if(tmp > max)
 				{
-					max = i;
+					maxIndex = i;
+                    max = tmp;
 				}
 			}
 			scorebw.write("\n");
-			familyMembers.get(max).add(info[0]);
+			familyMembers.get(maxIndex).add(info[0]);
 		}
 		scorebw.close();
 		File families = new File("families.txt");
